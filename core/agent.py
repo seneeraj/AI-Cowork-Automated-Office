@@ -1,134 +1,47 @@
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 import os
-import streamlit as st
 
-OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+class VectorKnowledgeBase:
 
-try:
-    import faiss
-    USE_FAISS = True
-except:
-    USE_FAISS = False
-
-from core.skill_engine import SkillEngine
-from core.executor import Executor
-from services.llm import generate_response
-from core.knowledge_engine import KnowledgeEngine
-
-
-
-class Agent:
     def __init__(self):
-        self.skill_engine = SkillEngine()
-        self.executor = Executor()
-        self.knowledge_engine = KnowledgeEngine()
-        self.knowledge_engine.build_index()
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.documents = []
+        self.embeddings = []
 
-    # -----------------------------
-    # MAIN PROCESS FUNCTION
-    # -----------------------------
-    def process(self, user_input, file_text=None, memory=None):
+        self.build_index()
 
-        # -----------------------------
-        # 1. TRY SKILL EXECUTION (TASK MODE)
-        # -----------------------------
-        try:
-            skill = self.skill_engine.match_skill(user_input)
-        except:
-            skill = None
+    def build_index(self):
 
-        if skill:
-            try:
-                results = self.executor.run_steps(skill["steps"], user_input)
-                combined_results = "\n".join(results)
-            except:
-                combined_results = "Task execution failed."
+        folder = "knowledge"
 
-            final_prompt = f"""
-You are generating a FINAL structured business output.
+        if not os.path.exists(folder):
+            return
 
-Based on these results:
-{combined_results}
+        self.documents = []
+        texts = []
 
-Return in this format:
+        for file in os.listdir(folder):
+            path = os.path.join(folder, file)
 
-Summary:
-- Short summary
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+                self.documents.append(content)
+                texts.append(content)
 
-Steps:
-1. Step one
-2. Step two
+        if texts:
+            self.embeddings = self.model.encode(texts)
 
-Recommendation:
-- Clear action
-"""
+    def search(self, query, top_k=2):
 
-            response = generate_response(final_prompt)
+        if not self.documents:
+            return ""
 
-            return {
-                "mode": "task",
-                "response": response
-            }
+        query_vec = self.model.encode([query])
 
-        # -----------------------------
-        # 2. CHAT MODE (RAG + MEMORY)
-        # -----------------------------
+        scores = cosine_similarity(query_vec, self.embeddings)[0]
 
-        # Conversation memory
-        conversation_context = ""
-        if memory:
-            try:
-                history = memory.get_messages(memory.get_chats()[0])
-                conversation_context = "\n".join(
-                    [f"{m['role']}: {m['content']}" for m in history[-3:]]
-                )
-            except:
-                conversation_context = ""
+        top_indices = np.argsort(scores)[-top_k:]
 
-        # Knowledge retrieval (RAG)
-        try:
-            knowledge_context = self.knowledge_engine.search(user_input)
-        except:
-            knowledge_context = ""
-
-        # File context (optional)
-        file_context = file_text[:1500] if file_text else ""
-
-        # -----------------------------
-        # FINAL PROMPT
-        # -----------------------------
-        final_prompt = f"""
-You are an intelligent AI assistant.
-
-Use available context to answer the user.
-
----------------------
-KNOWLEDGE:
-{knowledge_context}
-
----------------------
-CONVERSATION:
-{conversation_context}
-
----------------------
-DOCUMENT:
-{file_context}
-
----------------------
-USER QUESTION:
-{user_input}
-
----------------------
-
-Instructions:
-- If knowledge is relevant → use it
-- If not → answer normally
-- Be clear and structured
-- Avoid generic answers
-"""
-
-        response = generate_response(final_prompt)
-
-        return {
-            "mode": "chat",
-            "response": response
-        }
+        return "\n\n".join([self.documents[i] for i in top_indices])
