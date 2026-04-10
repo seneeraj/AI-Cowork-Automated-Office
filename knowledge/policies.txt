@@ -1,0 +1,63 @@
+POLICIES: Legal & Compliance
+
+- Company must comply with all Indian laws including RERA, GST, and Income Tax.
+- All transactions must have written agreements; verbal agreements are invalid.
+- All records (agreements, KYC, financial) must be stored for minimum 8 years.
+
+---
+
+POLICIES: Anti-Fraud & Ethics
+
+- Zero tolerance for fraud, misrepresentation, forgery, or hidden commissions.
+- Any fraud results in immediate termination and legal action.
+- Employees must maintain honesty, transparency, and professionalism.
+
+---
+
+POLICIES: AML & Data Protection
+
+- KYC (PAN, Aadhaar) mandatory for all clients.
+- Suspicious transactions must be reported.
+- Client data must remain confidential and secure.
+
+---
+
+POLICIES: HR Conduct
+
+- No discrimination in hiring.
+- Employees must follow code of conduct.
+- Bribery, harassment, and misleading clients are strictly prohibited.
+
+---
+
+POLICIES: Financial Governance
+
+- All payments must be via official bank channels.
+- All expenses must be approved and documented.
+- Regular audits must be conducted.
+
+---
+
+POLICIES: Technology & CRM
+
+- CRM usage is mandatory.
+- No offline deal tracking allowed.
+- Role-based access control must be followed.
+- Passwords must be strong and not shared.
+
+---
+
+POLICIES: AI & Automation
+
+- AI must be transparent and unbiased.
+- AI decisions must be reviewable.
+- Data used must be clean and consent-based.
+
+---
+
+CORE PRINCIPLES:
+
+- Compliance first
+- Transparency always
+- Documentation mandatory
+- Ethics non-negotiable

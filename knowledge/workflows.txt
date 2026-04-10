@@ -1,0 +1,115 @@
+WORKFLOW: Lead Management
+
+Steps:
+1. Capture leads from all channels
+2. Enter into CRM within 15 minutes
+3. Qualify leads (Hot/Warm/Cold)
+4. Assign leads within 30 minutes
+
+Rules:
+- No delay in CRM entry
+- Daily tracking mandatory
+
+---
+
+WORKFLOW: Property Onboarding
+
+Steps:
+1. Collect property and owner details
+2. Verify legal documents (title deed, EC)
+3. Create listing with photos, price, and details
+
+Rules:
+- No listing without verification
+
+---
+
+WORKFLOW: Client Handling
+
+Steps:
+1. Understand client requirements
+2. Build trust and rapport
+3. Share 3–5 property options
+4. Conduct site visits
+5. Follow-up regularly
+
+Rules:
+- Respond within 1 hour
+- No false commitments
+
+---
+
+WORKFLOW: Deal Closure
+
+Steps:
+1. Negotiate terms transparently
+2. Collect token amount
+3. Execute Agreement to Sell
+4. Complete Sale Deed
+
+Rules:
+- All transactions must be documented
+- Use bank payments only
+
+---
+
+WORKFLOW: Documentation & Compliance
+
+Steps:
+1. Maintain KYC records
+2. Store agreements and transaction records
+3. Ensure RERA compliance
+
+Rules:
+- Documentation mandatory
+- Maintain audit trail
+
+---
+
+WORKFLOW: CRM & Data Management
+
+Steps:
+1. Log all interactions
+2. Update lead status daily
+3. Track conversions and progress
+
+Rules:
+- No offline tracking
+
+---
+
+WORKFLOW: Risk Management
+
+Steps:
+1. Verify all documents
+2. Avoid high-risk/cash-heavy transactions
+3. Maintain audit trail
+
+---
+
+WORKFLOW: Post-Sale Service
+
+Steps:
+1. Assist with registration
+2. Support documentation
+3. Collect feedback
+4. Ask for referrals
+
+---
+
+WORKFLOW: Performance Tracking
+
+Metrics:
+- Leads handled
+- Conversion rate
+- Revenue
+- Customer satisfaction
+
+---
+
+WORKFLOW: Innovation
+
+Steps:
+1. Use AI for lead scoring
+2. Automate repetitive tasks
+3. Improve CRM systems

@@ -1,0 +1,26 @@
+Company Type: Real Estate Services Company
+
+Services:
+- Property buying, selling, leasing
+- Client advisory and deal management
+
+Operating Principles:
+- Professional and transparent communication
+- Data-driven decisions
+- Compliance-first approach
+
+Communication Style:
+- Clear and structured
+- Business-focused
+- Avoid unnecessary technical jargon
+
+Standard Output Format:
+1. Summary
+2. Key Insights
+3. Recommendations
+
+Customer Experience:
+- Respond within 1 hour
+- Maintain trust and professionalism
+- Avoid false commitments
+- Reply email should follow all ethics
