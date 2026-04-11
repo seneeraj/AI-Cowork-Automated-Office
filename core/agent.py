@@ -1,47 +1,143 @@
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-import os
+import streamlit as st
 
-class VectorKnowledgeBase:
+from core.skill_engine import SkillEngine
+from core.executor import Executor
+from services.llm import generate_response
+from core.knowledge_engine import KnowledgeEngine
 
+
+class Agent:
     def __init__(self):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self.documents = []
-        self.embeddings = []
+        self.skill_engine = SkillEngine()
+        self.executor = Executor()
+        self.knowledge_engine = KnowledgeEngine()
 
-        self.build_index()
+        # Build knowledge index safely
+        try:
+            self.knowledge_engine.build_index()
+        except:
+            pass
 
-    def build_index(self):
+    # =========================================================
+    # MAIN PROCESS FUNCTION
+    # =========================================================
+    def process(self, user_input, file_text=None, memory=None):
 
-        folder = "knowledge"
+        # =====================================================
+        # 1. TASK MODE (SKILL EXECUTION)
+        # =====================================================
+        try:
+            skill = self.skill_engine.match_skill(user_input)
+        except:
+            skill = None
 
-        if not os.path.exists(folder):
-            return
+        if skill:
+            try:
+                results = self.executor.run_steps(skill["steps"], user_input)
+                combined_results = "\n".join(results)
+            except:
+                combined_results = "Task execution failed."
 
-        self.documents = []
-        texts = []
+            final_prompt = f"""
+You are generating a structured business output.
 
-        for file in os.listdir(folder):
-            path = os.path.join(folder, file)
+Results:
+{combined_results}
 
-            with open(path, "r", encoding="utf-8") as f:
-                content = f.read()
-                self.documents.append(content)
-                texts.append(content)
+Return in this format:
 
-        if texts:
-            self.embeddings = self.model.encode(texts)
+Summary:
+- Short summary
 
-    def search(self, query, top_k=2):
+Steps:
+1. Step one
+2. Step two
 
-        if not self.documents:
-            return ""
+Recommendation:
+- Clear action
+"""
 
-        query_vec = self.model.encode([query])
+            response = generate_response(final_prompt)
 
-        scores = cosine_similarity(query_vec, self.embeddings)[0]
+            return {
+                "mode": "task",
+                "response": response
+            }
 
-        top_indices = np.argsort(scores)[-top_k:]
+        # =====================================================
+        # 2. CHAT MODE (RAG + MEMORY)
+        # =====================================================
 
-        return "\n\n".join([self.documents[i] for i in top_indices])
+        # -----------------------------
+        # Conversation Memory (FIXED)
+        # -----------------------------
+        conversation_context = ""
+
+        if memory:
+            try:
+                chat_id = st.session_state.get("current_chat")
+
+                if chat_id:
+                    history = memory.get_messages(chat_id)
+
+                    last_msgs = history[-3:] if len(history) > 3 else history
+
+                    conversation_context = "\n".join(
+                        [f"{m['role']}: {m['content']}" for m in last_msgs]
+                    )
+            except:
+                conversation_context = ""
+
+        # -----------------------------
+        # Knowledge Retrieval (LIGHT RAG)
+        # -----------------------------
+        try:
+            knowledge_context = self.knowledge_engine.search(user_input)
+        except:
+            knowledge_context = ""
+
+        # -----------------------------
+        # File Context (SAFE)
+        # -----------------------------
+        file_context = file_text[:1500] if file_text else ""
+
+        # =====================================================
+        # FINAL PROMPT
+        # =====================================================
+        final_prompt = f"""
+You are an intelligent AI assistant for business productivity.
+
+Use available context carefully.
+
+---------------------
+KNOWLEDGE:
+{knowledge_context}
+
+---------------------
+CONVERSATION:
+{conversation_context}
+
+---------------------
+DOCUMENT:
+{file_context}
+
+---------------------
+USER QUESTION:
+{user_input}
+
+---------------------
+
+Instructions:
+- Use knowledge if relevant
+- Use document if provided
+- Use conversation context if needed
+- Otherwise answer normally
+- Be clear, structured, and practical
+"""
+
+        response = generate_response(final_prompt)
+
+        return {
+            "mode": "chat",
+            "response": response
+        }
